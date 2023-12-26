@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Форма отправки{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function submitform() {
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance 
+        var theUrl = "/contact/add";
+        xmlhttp.open("POST", theUrl);
+        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        var name = document.getElementsByName('name')[0].value;
+        var lastname = document.getElementsByName('lastname')[0].value;
+        var sex = document.getElementsByName('sex');
+        if (sex) {
+            for (var i = 0; i < sex.length; i++) {
+                if (sex[i].checked){
+                    sex = sex[i].value;
+                    break;
+                }
+            }
+        }
+        var phone = document.getElementsByName('phone')[0].value;
+        var email = document.getElementsByName('email')[0].value;
+        xmlhttp.send(JSON.stringify({ "name": name, "lastname": lastname, "sex": sex, "phone": phone, "email": email}));
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    input {display: block;}
+</style>
+
+<div class="example-wrapper">
+    <h1>Форма контакта</h1>
+    Введите имя, фамилию, возраст, пол, телефон и email:
+    <input type="text" name="name" value="" placeholder="Имя">
+    <input type="text" name="lastname" value="" placeholder="Фамилия">
+    <div>
+        <input type="radio" id="male" name="sex" value="0" checked />
+        <label for="huey">Мужчина</label>
+    </div>
+    <div>
+        <input type="radio" id="female" name="sex" value="1" />
+        <label for="dewey">Женщина</label>
+    </div>
+    <input type="text" name="phone" value="" placeholder="Телефон">
+    <input type="text" name="email" value="" placeholder="Email">
+
+    <button onclick="submitform()">Отправить</button>
+</div>
+{% endblock %}
