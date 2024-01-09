@@ -4,6 +4,7 @@ namespace App\Service;
 
 use AmoCRM\Client\AmoCRMApiClient;
 use League\OAuth2\Client\Token\AccessToken;
+use AmoCRM\Exceptions\AmoCRMApiException;
 
 class AmoApiAuthBuilder
 {
@@ -67,7 +68,7 @@ class AmoApiAuthBuilder
 
         try {
             $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByCode($authToken);
-            $this->saveAccessTokenToJsonFile($tokenPath);
+            $this->saveAccessTokenToJsonFile($accessToken, $tokenPath);
 
             return $accessToken;
         } catch (AmoCRMApiException $e) {
