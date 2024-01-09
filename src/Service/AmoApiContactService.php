@@ -103,9 +103,7 @@ class AmoApiContactService
                 ->get((new ContactsFilter())->setQuery($contactDto->phone));
             return $contacts->first()->getId();
         } catch (AmoCRMApiException $e) {
-            if ($e->getMessage() === "No content") {
-                return 0;
-            }
+            return 0;
         }
     }
 
@@ -123,11 +121,11 @@ class AmoApiContactService
                 } else {
                     return true;
                 }
-            }
-        } catch (AmoCRMApiException $e) {
-            if ($e->getMessage() === "No content") {
+            } else {
                 return true;
             }
+        } catch (AmoCRMApiException $e) {
+            return true;
         }
     }
 
@@ -227,7 +225,7 @@ class AmoApiContactService
             $products = $this->apiClient
                 ->catalogElements($productsCatalog->first()->getId())
                 ->get();
-        } catch (Exception $e) {
+        } catch (AmoCRMApiException $e) {
             $products = [];
         }
 
