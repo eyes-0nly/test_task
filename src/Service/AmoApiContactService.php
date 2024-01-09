@@ -3,22 +3,17 @@
 namespace App\Service;
 
 use AmoCRM\Client\AmoCRMApiClient;
-use League\OAuth2\Client\Token\AccessToken;
 use AmoCRM\Models\ContactModel;
 use AmoCRM\Exceptions\AmoCRMApiException;
 use AmoCRM\Models\CustomFieldsValues\MultitextCustomFieldValuesModel;
 use AmoCRM\Models\CustomFieldsValues\ValueCollections\MultitextCustomFieldValueCollection;
 use AmoCRM\Models\CustomFieldsValues\ValueModels\MultitextCustomFieldValueModel;
 use AmoCRM\Collections\CustomFieldsValuesCollection;
-use AmoCRM\Models\CustomFieldsValues\TextCustomFieldValuesModel;
-use AmoCRM\Models\CustomFieldsValues\ValueCollections\TextCustomFieldValueCollection;
-use AmoCRM\Models\CustomFieldsValues\ValueModels\TextCustomFieldValueModel;
 use AmoCRM\Collections\ContactsCollection;
 use AmoCRM\Collections\LinksCollection;
 use AmoCRM\Models\CompanyModel;
 use AmoCRM\Models\Customers\CustomerModel;
 use AmoCRM\Models\LeadModel;
-use AmoCRM\Collections\TasksCollection;
 use AmoCRM\Models\TaskModel;
 use AmoCRM\Helpers\EntityTypesInterface;
 use AmoCRM\Filters\ContactsFilter;
@@ -35,8 +30,6 @@ use AmoCRM\Models\CustomFieldsValues\ValueModels\NumericCustomFieldValueModel;
 use AmoCRM\Models\CustomFieldsValues\SelectCustomFieldValuesModel;
 use AmoCRM\Models\CustomFieldsValues\ValueCollections\SelectCustomFieldValueCollection;
 use AmoCRM\Models\CustomFieldsValues\ValueModels\SelectCustomFieldValueModel;
-use AmoCRM\Filters\CustomFieldsFilter;
-use AmoCRM\Models\CustomFields\CustomFieldModel;
 
 use DateTime;
 use DateTimeZone;
