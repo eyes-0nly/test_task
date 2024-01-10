@@ -220,7 +220,7 @@ class AmoApiContactService
         try {
             $productsCatalog = $this->apiClient
                 ->catalogs()
-                ->get((new CatalogsFilter())->setType('products'));
+                ->get((new CatalogsFilter())->setType(EntityTypesInterface::PRODUCTS));
             $products = $this->apiClient
                 ->catalogElements($productsCatalog->first()->getId())
                 ->get();
