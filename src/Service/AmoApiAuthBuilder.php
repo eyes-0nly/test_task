@@ -70,7 +70,7 @@ class AmoApiAuthBuilder
             return $accessToken;
         } catch (AmoCRMApiException $e) {
             if ($e->getErrorCode() === 400) {
-                exit('Auth token has been revoked. Set new one in .env file.');
+                echo('Auth token has been revoked. Set new one in .env file.');
             }
         }
     }
