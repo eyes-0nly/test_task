@@ -69,7 +69,7 @@ class ContactController extends AbstractController
                     $contactId = $contactService->searchContact($contact);
                     if (
                         $contactId !== 0 &&
-                        $contactService->searchContactLeads($contact) === false
+                        $contactService->isContactHasSuccessfulLeads($contact) === true
                     ) {
                         $contactService->sendCustomer($contactId);
 

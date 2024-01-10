@@ -108,8 +108,7 @@ class AmoApiContactService
             return 0;
         }
     }
-
-    public function searchContactLeads(ContactDto $contactDto): bool
+    public function isContactHasSuccessfulLeads(ContactDto $contactDto): bool
     {
         try {
             $filter = (new LeadsFilter())->setQuery($contactDto->getPhone());
@@ -119,15 +118,15 @@ class AmoApiContactService
             if (isset($leads)) {
                 $leads = $leads->getBy('statusId', LeadModel::WON_STATUS_ID);
                 if ($leads) {
-                    return false;
-                } else {
                     return true;
+                } else {
+                    return false;
                 }
             } else {
-                return true;
+                return false;
             }
         } catch (AmoCRMApiException $e) {
-            return true;
+            return false;
         }
     }
 
