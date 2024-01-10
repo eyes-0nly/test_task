@@ -245,14 +245,14 @@ class AmoApiContactService
 
         //Устанавливаем время для задачи (+4 дня или до понедельника)
         $tz = new DateTimeZone('Europe/Moscow');
-        $date = new DateTime('now');
+        $date = new DateTime();
         $date->setTimezone($tz);
         $date->modify('+5 day');
         $date->setTime(9, 0, 0, 0);
-        $day_of_the_week = $date->format('l');
-        if ($day_of_the_week == 'Saturday') {
+        $dayOfTheWeek = $date->format('l');
+        if ($dayOfTheWeek == 'Saturday') {
             $date->modify('+2 day');
-        } elseif ($day_of_the_week == 'Sunday') {
+        } elseif ($dayOfTheWeek == 'Sunday') {
             $date->modify('+1 day');
         }
 
