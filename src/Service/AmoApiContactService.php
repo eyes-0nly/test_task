@@ -130,7 +130,7 @@ class AmoApiContactService
         }
     }
 
-    public function sendLead(ContactDto $contactDto): void
+    public function sendContactConnectedToLeadWithTask(ContactDto $contactDto): void
     {
         //Создаем модель контакта
         $contact = new ContactModel();
