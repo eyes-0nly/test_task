@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use AmoCRM\Client\AmoCRMApiClient;
-use League\OAuth2\Client\Token\AccessToken;
 
 class AmoApiAuthDirector
 {
