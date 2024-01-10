@@ -100,7 +100,7 @@ class AmoApiContactService
         try {
             $contacts = $this->apiClient
                 ->contacts()
-                ->get((new ContactsFilter())->setQuery($contactDto->phone));
+                ->get((new ContactsFilter())->setQuery($contactDto->getPhone()));
             return $contacts->first()->getId();
         } catch (AmoCRMApiException $e) {
             return 0;
@@ -110,7 +110,7 @@ class AmoApiContactService
     public function searchContactLeads(ContactDto $contactDto): bool
     {
         try {
-            $filter = (new LeadsFilter())->setQuery($contactDto->phone);
+            $filter = (new LeadsFilter())->setQuery($contactDto->getPhone());
 
             $leads = $this->apiClient->leads()->get($filter);
 
@@ -134,9 +134,9 @@ class AmoApiContactService
         //Создаем модель контакта
         $contact = new ContactModel();
         $contact
-            ->setName($contactDto->name . ' ' . $contactDto->lastname)
-            ->setFirstName($contactDto->name)
-            ->setLastName($contactDto->lastname);
+            ->setName($contactDto->getName() . ' ' . $contactDto->getLastname())
+            ->setFirstName($contactDto->getName())
+            ->setLastName($contactDto->getLastname());
 
         //Добавляем значение кастомных полей в модель
         $contact->setCustomFieldsValues(
@@ -148,7 +148,7 @@ class AmoApiContactService
                             (new MultitextCustomFieldValueCollection())->add(
                                 (new MultitextCustomFieldValueModel())
                                     ->setEnum('WORK')
-                                    ->setValue($contactDto->phone)
+                                    ->setValue($contactDto->getPhone())
                             )
                         )
                 )
@@ -158,7 +158,7 @@ class AmoApiContactService
                         ->setValues(
                             (new SelectCustomFieldValueCollection())->add(
                                 (new SelectCustomFieldValueModel())->setEnumCode(
-                                    $contactDto->sex
+                                    $contactDto->getSex()
                                 )
                             )
                         )
@@ -169,7 +169,7 @@ class AmoApiContactService
                         ->setValues(
                             (new NumericCustomFieldValueCollection())->add(
                                 (new NumericCustomFieldValueModel())->setValue(
-                                    $contactDto->age
+                                    $contactDto->getAge()
                                 )
                             )
                         )
@@ -181,7 +181,7 @@ class AmoApiContactService
                             (new MultitextCustomFieldValueCollection())->add(
                                 (new MultitextCustomFieldValueModel())
                                     ->setEnum('WORK')
-                                    ->setValue($contactDto->email)
+                                    ->setValue($contactDto->getEmail())
                             )
                         )
                 )

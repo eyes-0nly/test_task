@@ -42,12 +42,13 @@ class ContactController extends AbstractController
                 isset($parameters['email'])
             ) {
                 $contact = new ContactDto();
-                $contact->name = $parameters['name'];
-                $contact->lastname = $parameters['lastname'];
-                $contact->sex = $parameters['sex'];
-                $contact->age = (int) $parameters['age'];
-                $contact->phone = $parameters['phone'];
-                $contact->email = $parameters['email'];
+                $contact
+                    ->setName($parameters['name'])
+                    ->setLastname($parameters['lastname'])
+                    ->setSex($parameters['sex'])
+                    ->setAge((int) $parameters['age'])
+                    ->setPhone($parameters['phone'])
+                    ->setEmail($parameters['email']);
                 $errors = $validator->validate($contact);
 
                 //Проверяем валидацию контакта

@@ -20,7 +20,7 @@ class ContactDto
         minMessage: 'Your first name must be at least {{ limit }} characters long',
         maxMessage: 'Your first name cannot be longer than {{ limit }} characters',
     )]
-    public string $name;
+    private string $name;
 
     #[Type('string')]
     #[NotBlank()]
@@ -30,12 +30,12 @@ class ContactDto
         minMessage: 'Your last name must be at least {{ limit }} characters long',
         maxMessage: 'Your last name cannot be longer than {{ limit }} characters',
     )]
-    public string $lastname;
+    private string $lastname;
 
     #[Type('string')]
     #[NotBlank()]
     #[Regex('/^(MALE|FEMALE)+$/')]
-    public string $sex;
+    private string $sex;
 
     #[Type('integer')]
     #[Range(
@@ -43,7 +43,7 @@ class ContactDto
         max: 150,
         notInRangeMessage: 'Your age must be above {{ min }} and less than {{ max }}',
     )]
-    public int $age;
+    private int $age;
 
     #[Type('string')]
     #[NotBlank()]
@@ -54,7 +54,7 @@ class ContactDto
         maxMessage: 'Your phone cannot be longer than {{ limit }} characters',
     )]
     #[Regex('/^[0-9+()\- ]+$/')]
-    public string $phone;
+    private string $phone;
 
     #[Email()]
     #[NotBlank()]
@@ -64,6 +64,72 @@ class ContactDto
         minMessage: 'Your Email must be at least {{ limit }} characters long',
         maxMessage: 'Your Email cannot be longer than {{ limit }} characters',
     )]
-    public string $email;
+    private string $email;
+
+    public function setName(string $name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setLastname(string $lastname)
+    {
+        $this->lastname = $lastname;
+        return $this;
+    }
+
+    public function getLastname(): string
+    {
+        return $this->lastname;
+    }
+
+    public function setSex(string $sex)
+    {
+        $this->sex = $sex;
+        return $this;
+    }
+
+    public function getSex(): string
+    {
+        return $this->sex;
+    }
+
+    public function setAge(int $age)
+    {
+        $this->age = $age;
+        return $this;
+    }
+
+    public function getAge(): int
+    {
+        return $this->age;
+    }
+
+    public function setPhone(string $phone)
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    public function getPhone(): string
+    {
+        return $this->phone;
+    }
+
+    public function setEmail(string $email)
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
 
 }
