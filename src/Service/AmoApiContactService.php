@@ -249,10 +249,10 @@ class AmoApiContactService
         $date->setTimezone($tz);
         $date->modify('+5 day');
         $date->setTime(9, 0, 0, 0);
-        $dayOfTheWeek = $date->format('l');
-        if ($dayOfTheWeek == 'Saturday') {
+        $dayOfTheWeek = $date->format('N');
+        if ($dayOfTheWeek === 6) {
             $date->modify('+2 day');
-        } elseif ($dayOfTheWeek == 'Sunday') {
+        } elseif ($dayOfTheWeek === 7) {
             $date->modify('+1 day');
         }
 
