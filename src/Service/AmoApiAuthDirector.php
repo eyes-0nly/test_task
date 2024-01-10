@@ -27,14 +27,14 @@ class AmoApiAuthDirector
         ];
     }
 
-    public function setTokenPath(string $tokenPath): AmoApiAuthDirector
+    public function setTokenPath(string $tokenPath): self
     {
         $this->tokenPath = $tokenPath;
 
         return $this;
     }
 
-    public function buildAuthentication(): AmoApiAuthDirector
+    public function buildAuthentication(): self
     {
         $this->builder->init();
 
