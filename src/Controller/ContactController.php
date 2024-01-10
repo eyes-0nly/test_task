@@ -34,11 +34,11 @@ class ContactController extends AbstractController
         if ($content = $request->getContent()) {
             $parameters = json_decode($content, true);
             if (
-                isset($parameters['name']) and
-                isset($parameters['lastname']) and
-                isset($parameters['sex']) and
-                isset($parameters['age']) and
-                isset($parameters['phone']) and
+                isset($parameters['name']) &&
+                isset($parameters['lastname']) &&
+                isset($parameters['sex']) &&
+                isset($parameters['age']) &&
+                isset($parameters['phone']) &&
                 isset($parameters['email'])
             ) {
                 $contact = new ContactDto();
@@ -66,7 +66,7 @@ class ContactController extends AbstractController
                     $contactService->checkIfCustomFieldsExists();
                     $contactId = $contactService->searchContact($contact);
                     if (
-                        $contactId !== 0 and
+                        $contactId !== 0 &&
                         $contactService->searchContactLeads($contact) === false
                     ) {
                         $contactService->sendCustomer($contact, $contactId);
