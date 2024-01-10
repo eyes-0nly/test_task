@@ -271,7 +271,7 @@ class AmoApiContactService
         $this->apiClient->tasks()->addOne($task);
     }
 
-    public function sendCustomer(ContactDto $contactDto, int $contactId): void
+    public function sendCustomer(int $contactId): void
     {
         //Создадим покупателя
         $customer = new CustomerModel();

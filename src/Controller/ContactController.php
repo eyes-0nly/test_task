@@ -72,7 +72,7 @@ class ContactController extends AbstractController
                         $contactId !== 0 &&
                         $contactService->searchContactLeads($contact) === false
                     ) {
-                        $contactService->sendCustomer($contact, $contactId);
+                        $contactService->sendCustomer($contactId);
 
                         return new JsonResponse([
                             'status' => 'ok',
