@@ -135,7 +135,7 @@ class AmoApiContactService
         //Создаем модель контакта
         $contact = new ContactModel();
         $contact
-            ->setName($contactDto->getName() . ' ' . $contactDto->getLastname())
+            ->setName(sprintf('%s %s', $contactDto->getName(), $contactDto->getLastname()))
             ->setFirstName($contactDto->getName())
             ->setLastName($contactDto->getLastname());
 
