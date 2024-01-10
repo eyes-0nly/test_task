@@ -27,7 +27,6 @@ class ContactController extends AbstractController
     public function add(
         Request $request,
         ValidatorInterface $validator,
-        AmoApiAuthDirector $authDirector,
         AmoApiContactService $contactService
     ): Response {
         $parameters = [];
@@ -60,6 +59,8 @@ class ContactController extends AbstractController
                         'msg' => $errorsString,
                     ]);
                 } else {
+                    $config = AmoApiAuthDirector::getDefaultCredentials();
+                    $authDirector = new AmoApiAuthDirector($config);
                     $apiClient = $authDirector
                         ->setTokenPath('../amo_token.json')
                         ->buildAuthentication()

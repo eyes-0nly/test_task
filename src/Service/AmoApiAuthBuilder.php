@@ -11,26 +11,22 @@ class AmoApiAuthBuilder
 {
     private AmoCRMApiClient $apiClient;
 
-    public function init(): void 
+    private array $apiClientConfig;
+
+    public function __construct(array $apiClientConfig)
     {
-        $credentials = $this->getCredentials();
-        $this->apiClient = (new AmoCRMApiClient($credentials['clientId'], $credentials['clientSecret'], $credentials['redirectUri']))
-        ->setAccountBaseDomain($credentials['baseDomain']);
+        $this->apiClientConfig = $apiClientConfig;
     }
 
-    public function getCredentials(): array
+    public function init(): void 
     {
-        return [
-            'redirectUri' => $_ENV['REDIRECT_URI'],
-            'clientId' => $_ENV['INTEGRATION_ID'],
-            'clientSecret' => $_ENV['SECRET'],
-            'baseDomain' => $_ENV['BASE_DOMAIN']
-        ];
+        $this->apiClient = (new AmoCRMApiClient($this->apiClientConfig['client_id'], $this->apiClientConfig['client_secret'], $this->apiClientConfig['redirect_uri']))
+        ->setAccountBaseDomain($this->apiClientConfig['base_domain']);
     }
 
     public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 
     {
-        $authToken = $_ENV['AUTH_TOKEN'];
+        $authToken =  $_ENV['AUTH_TOKEN'];
 
         if (file_exists($tokenPath)) {
             $rawToken = json_decode(file_get_contents($tokenPath), true);

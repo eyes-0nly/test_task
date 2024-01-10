@@ -11,9 +11,20 @@ class AmoApiAuthDirector
 
     private string $tokenPath;
 
-    public function __construct(AmoApiAuthBuilder $builder)
+    public function __construct(array $apiClientConfig)
     {
+        $builder = new AmoApiAuthBuilder($apiClientConfig);
         $this->builder = $builder;
+    }
+
+    public static function getDefaultCredentials(): array
+    {
+        return [
+            'redirect_uri' => $_ENV['REDIRECT_URI'],
+            'client_id' => $_ENV['INTEGRATION_ID'],
+            'client_secret' => $_ENV['SECRET'],
+            'base_domain' => $_ENV['BASE_DOMAIN']
+        ];
     }
 
     public function setTokenPath(string $tokenPath): AmoApiAuthDirector
