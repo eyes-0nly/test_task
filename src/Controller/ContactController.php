@@ -15,10 +15,12 @@ use App\Service\AmoApiContactService;
 
 class ContactController extends AbstractController
 {
+    private const FORM_TEMPLATE = 'contact/index.html.twig';
+
     #[Route('/contact/form', name: 'app_contact', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render('contact/index.html.twig');
+        return $this->render(self::FORM_TEMPLATE);
     }
 
     #[Route('/contact/add', name: 'app_contact_add', methods: ['POST'])]
