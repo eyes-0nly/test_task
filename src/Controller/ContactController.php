@@ -60,9 +60,8 @@ class ContactController extends AbstractController
                     ]);
                 } else {
                     $config = AmoApiAuthDirector::getDefaultCredentials();
-                    $authDirector = new AmoApiAuthDirector($config);
+                    $authDirector = new AmoApiAuthDirector($config, '../amo_token.json');
                     $apiClient = $authDirector
-                        ->setTokenPath('../amo_token.json')
                         ->buildAuthentication()
                         ->getAuthenticatedClient();
                     $contactService = $contactService->setClient($apiClient);

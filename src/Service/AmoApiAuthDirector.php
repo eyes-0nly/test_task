@@ -11,10 +11,11 @@ class AmoApiAuthDirector
 
     private string $tokenPath;
 
-    public function __construct(array $apiClientConfig)
+    public function __construct(array $apiClientConfig, string $tokenPath)
     {
         $builder = new AmoApiAuthBuilder($apiClientConfig);
         $this->builder = $builder;
+        $this->tokenPath = $tokenPath;
     }
 
     public static function getDefaultCredentials(): array
@@ -25,13 +26,6 @@ class AmoApiAuthDirector
             'client_secret' => $_ENV['SECRET'],
             'base_domain' => $_ENV['BASE_DOMAIN']
         ];
-    }
-
-    public function setTokenPath(string $tokenPath): self
-    {
-        $this->tokenPath = $tokenPath;
-
-        return $this;
     }
 
     public function buildAuthentication(): self
