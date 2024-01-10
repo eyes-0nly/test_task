@@ -206,14 +206,12 @@ class AmoApiContactService
         //Выбираем рандомного пользователя
         $usersCollection = $this->apiClient->users()->get();
         $users = $usersCollection->toArray();
-        $random_user = $users[array_rand($users)];
+        $randomUser = $users[array_rand($users)];
 
         //Создаем сделку
         $lead = new LeadModel();
         $lead
-            ->setName('Сделка из формы')
-            ->setPrice(100000)
-            ->setResponsibleUserId($random_user['id'])
+            ->setResponsibleUserId($randomUser['id'])
             ->setContacts((new ContactsCollection())->add($contact))
             ->setCompany($company);
         $lead = $this->apiClient->leads()->addOne($lead);
@@ -265,7 +263,7 @@ class AmoApiContactService
             ->setEntityType(EntityTypesInterface::LEADS)
             ->setEntityId($lead->getId())
             ->setDuration(60 * 60 * 9) //в течение рабочего дня
-            ->setResponsibleUserId($random_user['id']);
+            ->setResponsibleUserId($randomUser['id']);
 
         $this->apiClient->tasks()->addOne($task);
     }
