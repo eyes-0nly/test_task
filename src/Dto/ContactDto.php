@@ -69,6 +69,7 @@ class ContactDto
     public function setName(string $name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -80,6 +81,7 @@ class ContactDto
     public function setLastname(string $lastname)
     {
         $this->lastname = $lastname;
+
         return $this;
     }
 
@@ -91,6 +93,7 @@ class ContactDto
     public function setSex(string $sex)
     {
         $this->sex = $sex;
+
         return $this;
     }
 
@@ -102,6 +105,7 @@ class ContactDto
     public function setAge(int $age)
     {
         $this->age = $age;
+
         return $this;
     }
 
@@ -113,6 +117,7 @@ class ContactDto
     public function setPhone(string $phone)
     {
         $this->phone = $phone;
+
         return $this;
     }
 
@@ -124,6 +129,7 @@ class ContactDto
     public function setEmail(string $email)
     {
         $this->email = $email;
+
         return $this;
     }
 

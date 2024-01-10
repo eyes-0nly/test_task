@@ -54,6 +54,7 @@ class ContactController extends AbstractController
                 //Проверяем валидацию контакта
                 if (count($errors) > 0) {
                     $errorsString = (string) $errors;
+
                     return new JsonResponse([
                         'status' => 'error',
                         'msg' => $errorsString,
@@ -71,12 +72,14 @@ class ContactController extends AbstractController
                         $contactService->searchContactLeads($contact) === false
                     ) {
                         $contactService->sendCustomer($contact, $contactId);
+
                         return new JsonResponse([
                             'status' => 'ok',
                             'msg' => 'Added customer',
                         ]);
                     } else {
                         $contactService->sendLead($contact);
+
                         return new JsonResponse([
                             'status' => 'ok',
                             'msg' => 'Added lead',

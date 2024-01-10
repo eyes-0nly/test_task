@@ -42,6 +42,7 @@ class AmoApiContactService
     public function setClient(AmoCRMApiClient $apiClient): AmoApiContactService
     {
         $this->apiClient = $apiClient;
+
         return $this;
     }
 
@@ -101,6 +102,7 @@ class AmoApiContactService
             $contacts = $this->apiClient
                 ->contacts()
                 ->get((new ContactsFilter())->setQuery($contactDto->getPhone()));
+
             return $contacts->first()->getId();
         } catch (AmoCRMApiException $e) {
             return 0;
