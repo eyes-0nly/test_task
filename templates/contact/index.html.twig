@@ -8,9 +8,9 @@
     function submitform(e) {
         e.preventDefault();
         var xmlhttp = new XMLHttpRequest();
-        var theUrl = "/contact/add";
-        xmlhttp.open("POST", theUrl);
-        xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        var theUrl = '/contact/add';
+        xmlhttp.open('POST', theUrl);
+        xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
         var name = document.getElementsByName('name')[0].value;
         var lastname = document.getElementsByName('lastname')[0].value;
         var sex = document.getElementsByName('sex');
@@ -25,7 +25,7 @@
         var age = document.getElementsByName('age')[0].value;
         var phone = document.getElementsByName('phone')[0].value;
         var email = document.getElementsByName('email')[0].value;
-        xmlhttp.send(JSON.stringify({ "name": name, "lastname": lastname, "sex": sex, "age": age, "phone": phone, "email": email}));
+        xmlhttp.send(JSON.stringify({ 'name': name, 'lastname': lastname, 'sex': sex, 'age': age, 'phone': phone, 'email': email}));
         return false;
     }
 </script>

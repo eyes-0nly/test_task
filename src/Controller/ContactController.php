@@ -15,13 +15,13 @@ use App\Service\AmoApiContactService;
 
 class ContactController extends AbstractController
 {
-    #[Route("/contact/form", name: "app_contact", methods: ["GET"])]
+    #[Route('/contact/form', name: 'app_contact', methods: ['GET'])]
     public function index(): Response
     {
-        return $this->render("contact/index.html.twig");
+        return $this->render('contact/index.html.twig');
     }
 
-    #[Route("/contact/add", name: "app_contact_add", methods: ["POST"])]
+    #[Route('/contact/add', name: 'app_contact_add', methods: ['POST'])]
     public function add(
         Request $request,
         ValidatorInterface $validator,
@@ -32,32 +32,32 @@ class ContactController extends AbstractController
         if ($content = $request->getContent()) {
             $parameters = json_decode($content, true);
             if (
-                isset($parameters["name"]) and
-                isset($parameters["lastname"]) and
-                isset($parameters["sex"]) and
-                isset($parameters["age"]) and
-                isset($parameters["phone"]) and
-                isset($parameters["email"])
+                isset($parameters['name']) and
+                isset($parameters['lastname']) and
+                isset($parameters['sex']) and
+                isset($parameters['age']) and
+                isset($parameters['phone']) and
+                isset($parameters['email'])
             ) {
                 $contact = new ContactDto();
-                $contact->name = $parameters["name"];
-                $contact->lastname = $parameters["lastname"];
-                $contact->sex = $parameters["sex"];
-                $contact->age = (int) $parameters["age"];
-                $contact->phone = $parameters["phone"];
-                $contact->email = $parameters["email"];
+                $contact->name = $parameters['name'];
+                $contact->lastname = $parameters['lastname'];
+                $contact->sex = $parameters['sex'];
+                $contact->age = (int) $parameters['age'];
+                $contact->phone = $parameters['phone'];
+                $contact->email = $parameters['email'];
                 $errors = $validator->validate($contact);
 
                 //Проверяем валидацию контакта
                 if (count($errors) > 0) {
                     $errorsString = (string) $errors;
                     return new JsonResponse([
-                        "status" => "error",
-                        "msg" => $errorsString,
+                        'status' => 'error',
+                        'msg' => $errorsString,
                     ]);
                 } else {
                     $apiClient = $authDirector
-                        ->setTokenPath("../amo_token.json")
+                        ->setTokenPath('../amo_token.json')
                         ->buildAuthentication()
                         ->getAuthenticatedClient();
                     $contactService = $contactService->setClient($apiClient);
@@ -69,27 +69,27 @@ class ContactController extends AbstractController
                     ) {
                         $contactService->sendCustomer($contact, $contactId);
                         return new JsonResponse([
-                            "status" => "ok",
-                            "msg" => "Added customer",
+                            'status' => 'ok',
+                            'msg' => 'Added customer',
                         ]);
                     } else {
                         $contactService->sendLead($contact);
                         return new JsonResponse([
-                            "status" => "ok",
-                            "msg" => "Added lead",
+                            'status' => 'ok',
+                            'msg' => 'Added lead',
                         ]);
                     }
                 }
             } else {
                 return new JsonResponse([
-                    "status" => "error",
-                    "msg" => "Not enough parameters in json form data",
+                    'status' => 'error',
+                    'msg' => 'Not enough parameters in json form data',
                 ]);
             }
         } else {
             return new JsonResponse([
-                "status" => "error",
-                "msg" => "No parameters in request",
+                'status' => 'error',
+                'msg' => 'No parameters in request',
             ]);
         }
     }

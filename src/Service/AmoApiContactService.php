@@ -55,23 +55,23 @@ class AmoApiContactService
         $customFieldsCollection = new CustomFieldsCollection();
 
         //Проверяем, есть ли поля, если нет создаем
-        if (empty($fields->getBy("code", "SEX"))) {
+        if (empty($fields->getBy('code', 'SEX'))) {
             $sex = new SelectCustomFieldModel();
-            $sex->setName("Пол")
+            $sex->setName('Пол')
                 ->setSort(30)
-                ->setCode("SEX")
+                ->setCode('SEX')
                 ->setEnums(
                     (new CustomFieldEnumsCollection())
                         ->add(
                             (new EnumModel())
-                                ->setValue("МУЖЧИНА")
-                                ->setCode("MALE")
+                                ->setValue('МУЖЧИНА')
+                                ->setCode('MALE')
                                 ->setSort(10)
                         )
                         ->add(
                             (new EnumModel())
-                                ->setValue("ЖЕНЩИНА")
-                                ->setCode("FEMALE")
+                                ->setValue('ЖЕНЩИНА')
+                                ->setCode('FEMALE')
                                 ->setSort(20)
                         )
                 );
@@ -79,11 +79,11 @@ class AmoApiContactService
             $customFieldsCollection->add($sex);
         }
 
-        if (empty($fields->getBy("code", "AGE"))) {
+        if (empty($fields->getBy('code', 'AGE'))) {
             $age = new NumericCustomFieldModel();
-            $age->setName("Возраст")
+            $age->setName('Возраст')
                 ->setSort(40)
-                ->setCode("AGE");
+                ->setCode('AGE');
 
             $customFieldsCollection->add($age);
         }
@@ -115,7 +115,7 @@ class AmoApiContactService
             $leads = $this->apiClient->leads()->get($filter);
 
             if (isset($leads)) {
-                $leads = $leads->getBy("statusId", LeadModel::WON_STATUS_ID);
+                $leads = $leads->getBy('statusId', LeadModel::WON_STATUS_ID);
                 if ($leads) {
                     return false;
                 } else {
@@ -134,7 +134,7 @@ class AmoApiContactService
         //Создаем модель контакта
         $contact = new ContactModel();
         $contact
-            ->setName($contactDto->name . " " . $contactDto->lastname)
+            ->setName($contactDto->name . ' ' . $contactDto->lastname)
             ->setFirstName($contactDto->name)
             ->setLastName($contactDto->lastname);
 
@@ -143,18 +143,18 @@ class AmoApiContactService
             (new CustomFieldsValuesCollection())
                 ->add(
                     (new MultitextCustomFieldValuesModel())
-                        ->setFieldCode("PHONE")
+                        ->setFieldCode('PHONE')
                         ->setValues(
                             (new MultitextCustomFieldValueCollection())->add(
                                 (new MultitextCustomFieldValueModel())
-                                    ->setEnum("WORK")
+                                    ->setEnum('WORK')
                                     ->setValue($contactDto->phone)
                             )
                         )
                 )
                 ->add(
                     (new SelectCustomFieldValuesModel())
-                        ->setFieldCode("SEX")
+                        ->setFieldCode('SEX')
                         ->setValues(
                             (new SelectCustomFieldValueCollection())->add(
                                 (new SelectCustomFieldValueModel())->setEnumCode(
@@ -165,7 +165,7 @@ class AmoApiContactService
                 )
                 ->add(
                     (new NumericCustomFieldValuesModel())
-                        ->setFieldCode("AGE")
+                        ->setFieldCode('AGE')
                         ->setValues(
                             (new NumericCustomFieldValueCollection())->add(
                                 (new NumericCustomFieldValueModel())->setValue(
@@ -176,11 +176,11 @@ class AmoApiContactService
                 )
                 ->add(
                     (new MultitextCustomFieldValuesModel())
-                        ->setFieldCode("EMAIL")
+                        ->setFieldCode('EMAIL')
                         ->setValues(
                             (new MultitextCustomFieldValueCollection())->add(
                                 (new MultitextCustomFieldValueModel())
-                                    ->setEnum("WORK")
+                                    ->setEnum('WORK')
                                     ->setValue($contactDto->email)
                             )
                         )
@@ -198,7 +198,7 @@ class AmoApiContactService
                 ->first();
         } catch (AmoCRMApiException $e) {
             $company = new CompanyModel();
-            $company->setName("Компания " . rand(1, 1000));
+            $company->setName('Компания ' . rand(1, 1000));
             $company = $this->apiClient->companies()->addOne($company);
         }
 
@@ -210,9 +210,9 @@ class AmoApiContactService
         //Создаем сделку
         $lead = new LeadModel();
         $lead
-            ->setName("Сделка из формы")
+            ->setName('Сделка из формы')
             ->setPrice(100000)
-            ->setResponsibleUserId($random_user["id"])
+            ->setResponsibleUserId($random_user['id'])
             ->setContacts((new ContactsCollection())->add($contact))
             ->setCompany($company);
         $lead = $this->apiClient->leads()->addOne($lead);
@@ -221,7 +221,7 @@ class AmoApiContactService
         try {
             $productsCatalog = $this->apiClient
                 ->catalogs()
-                ->get((new CatalogsFilter())->setType("products"));
+                ->get((new CatalogsFilter())->setType('products'));
             $products = $this->apiClient
                 ->catalogElements($productsCatalog->first()->getId())
                 ->get();
@@ -245,26 +245,26 @@ class AmoApiContactService
         $task = new TaskModel();
 
         //Устанавливаем время для задачи (+4 дня или до понедельника)
-        $tz = new DateTimeZone("Europe/Moscow");
-        $date = new DateTime("now");
+        $tz = new DateTimeZone('Europe/Moscow');
+        $date = new DateTime('now');
         $date->setTimezone($tz);
-        $date->modify("+5 day");
+        $date->modify('+5 day');
         $date->setTime(9, 0, 0, 0);
-        $day_of_the_week = $date->format("l");
-        if ($day_of_the_week == "Saturday") {
-            $date->modify("+2 day");
-        } elseif ($day_of_the_week == "Sunday") {
-            $date->modify("+1 day");
+        $day_of_the_week = $date->format('l');
+        if ($day_of_the_week == 'Saturday') {
+            $date->modify('+2 day');
+        } elseif ($day_of_the_week == 'Sunday') {
+            $date->modify('+1 day');
         }
 
         $task
             ->setTaskTypeId(TaskModel::TASK_TYPE_ID_FOLLOW_UP)
-            ->setText("Позвонить по новому лиду из формы")
-            ->setCompleteTill($date->format("U"))
+            ->setText('Позвонить по новому лиду из формы')
+            ->setCompleteTill($date->format('U'))
             ->setEntityType(EntityTypesInterface::LEADS)
             ->setEntityId($lead->getId())
             ->setDuration(60 * 60 * 9) //в течение рабочего дня
-            ->setResponsibleUserId($random_user["id"]);
+            ->setResponsibleUserId($random_user['id']);
 
         $this->apiClient->tasks()->addOne($task);
     }
