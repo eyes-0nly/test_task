@@ -79,7 +79,7 @@ class ContactController extends AbstractController
                             'msg' => 'Added customer',
                         ]);
                     } else {
-                        $contactService->sendContactConnectedToLeadWithTask($contact);
+                        $contactService->sendLeadConnectedToContact($contact);
 
                         return new JsonResponse([
                             'status' => 'ok',
