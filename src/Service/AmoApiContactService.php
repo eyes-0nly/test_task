@@ -277,7 +277,6 @@ class AmoApiContactService
 
         //Привяжем контакт к созданному покупателю
         $contact = $this->apiClient->contacts()->getOne($contactId);
-        $contact->setIsMain(false);
 
         $links = new LinksCollection();
         $links->add($contact);
