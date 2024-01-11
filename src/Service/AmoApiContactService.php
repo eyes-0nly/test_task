@@ -188,9 +188,6 @@ class AmoApiContactService
                 )
         );
 
-        //Создаем контакт
-        $contact = $this->apiClient->contacts()->addOne($contact);
-
         //Добавим компанию для сделки
         try {
             $company = $this->apiClient
@@ -214,7 +211,8 @@ class AmoApiContactService
             ->setResponsibleUserId($randomUser['id'])
             ->setContacts((new ContactsCollection())->add($contact))
             ->setCompany($company);
-        $lead = $this->apiClient->leads()->addOne($lead);
+
+        $lead = $this->apiClient->leads()->addOneComplex($lead);
 
         // Получаем список товаров
         try {
@@ -276,7 +274,8 @@ class AmoApiContactService
         $customer = $this->apiClient->customers()->addOne($customer);
 
         //Привяжем контакт к созданному покупателю
-        $contact = $this->apiClient->contacts()->getOne($contactId);
+        $contact = (new ContactModel())
+        ->setId($contactId);
 
         $links = new LinksCollection();
         $links->add($contact);
