@@ -7,33 +7,28 @@ use AmoCRM\Client\AmoCRMApiClient;
 use League\OAuth2\Client\Token\AccessToken;
 use AmoCRM\Exceptions\AmoCRMApiException;
 use Symfony\Component\Dotenv\Dotenv;
+use App\Service\AmoApiAuthConfigurator;
 
 class AmoApiAuthBuilder
 {
     private AmoCRMApiClient $apiClient;
 
-    private array $apiClientConfig;
+    private AmoApiAuthConfigurator $apiClientConfig;
 
-    public function __construct(array $apiClientConfig)
+    public function __construct(AmoApiAuthConfigurator $apiClientConfig)
     {
         $this->apiClientConfig = $apiClientConfig;
     }
 
     public function init(): void 
     {
-        $this->apiClient = (new AmoCRMApiClient($this->apiClientConfig['client_id'], $this->apiClientConfig['client_secret'], $this->apiClientConfig['redirect_uri']))
-        ->setAccountBaseDomain($this->apiClientConfig['base_domain']);
+        $credentials = $this->apiClientConfig->getCredentials();
+        $this->apiClient = (new AmoCRMApiClient($credentials['client_id'], $credentials['client_secret'], $credentials['redirect_uri']))
+        ->setAccountBaseDomain($credentials['base_domain']);
     }
 
-    public static function getDefaultCredentials(): array
-    {
-        (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__).'/../.env');
-        return [
-            'redirect_uri' => getenv('REDIRECT_URI'),
-            'client_id' => getenv('INTEGRATION_ID'),
-            'client_secret' => getenv('SECRET'),
-            'base_domain' => getenv('BASE_DOMAIN')
-        ];
+    public function getApiClientConfig() {
+        return $this->apiClientConfig;
     }
 
     public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 

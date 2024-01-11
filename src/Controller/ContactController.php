@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Dto\ContactDto;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use App\Service\AmoApiAuthBuilder;
 use App\Service\AmoApiAuthDirector;
 use App\Service\AmoApiContactService;
 
@@ -28,6 +27,7 @@ class ContactController extends AbstractController
     public function add(
         Request $request,
         ValidatorInterface $validator,
+        AmoApiAuthDirector $authDirector,
         AmoApiContactService $contactService
     ): Response {
         $parameters = [];
@@ -60,8 +60,6 @@ class ContactController extends AbstractController
                         'msg' => $errorsString,
                     ]);
                 } else {
-                    $config = AmoApiAuthBuilder::getDefaultCredentials();
-                    $authDirector = new AmoApiAuthDirector($config, '../amo_token.json');
                     $apiClient = $authDirector
                         ->buildAuthentication()
                         ->getAuthenticatedClient();

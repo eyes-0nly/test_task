@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use AmoCRM\Client\AmoCRMApiClient;
+use App\Service\AmoApiAuthBuilder;
+use App\Service\AmoApiAuthConfigurator;
 
 class AmoApiAuthDirector
 {
@@ -11,14 +13,13 @@ class AmoApiAuthDirector
 
     private string $tokenPath;
 
-    public function __construct(array $apiClientConfig, string $tokenPath)
+    public function __construct(AmoApiAuthConfigurator $config)
     {
-        $builder = new AmoApiAuthBuilder($apiClientConfig);
-        $this->builder = $builder;
-        $this->tokenPath = $tokenPath;
+        $this->builder = new AmoApiAuthBuilder($config);
+        $this->tokenPath = ($this->builder->getApiClientConfig())->getTokenPath();
     }
 
-    public function buildAuthentication(): self
+    public function buildAuthentication(AmoApiAuthConfigurator $config = null): self
     {
         $this->builder->init();
 
