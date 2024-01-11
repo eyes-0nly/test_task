@@ -111,9 +111,9 @@ class AmoApiContactService
     public function isContactHasSuccessfulLeads(ContactDto $contactDto): bool
     {
         try {
-            $filter = (new LeadsFilter())->setQuery($contactDto->getPhone());
-
-            $leads = $this->apiClient->leads()->get($filter);
+            $leads = $this->apiClient
+                ->leads()
+                ->get((new LeadsFilter())->setQuery($contactDto->getPhone()));
 
             if (isset($leads)) {
                 $leads = $leads->getBy('statusId', LeadModel::WON_STATUS_ID);

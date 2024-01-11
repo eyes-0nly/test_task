@@ -67,6 +67,7 @@ class ContactController extends AbstractController
                     $contactService = $contactService->setClient($apiClient);
                     $contactService->checkIfCustomFieldsExists();
                     $contactId = $contactService->searchContact($contact);
+
                     if (
                         $contactId !== 0 &&
                         $contactService->isContactHasSuccessfulLeads($contact) === true
