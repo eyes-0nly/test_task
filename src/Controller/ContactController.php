@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Dto\ContactDto;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Service\AmoApiAuthBuilder;
 use App\Service\AmoApiAuthDirector;
 use App\Service\AmoApiContactService;
 
@@ -59,7 +60,7 @@ class ContactController extends AbstractController
                         'msg' => $errorsString,
                     ]);
                 } else {
-                    $config = AmoApiAuthDirector::getDefaultCredentials();
+                    $config = AmoApiAuthBuilder::getDefaultCredentials();
                     $authDirector = new AmoApiAuthDirector($config, '../amo_token.json');
                     $apiClient = $authDirector
                         ->buildAuthentication()
@@ -67,7 +68,7 @@ class ContactController extends AbstractController
                     $contactService = $contactService->setClient($apiClient);
                     $contactService->checkIfCustomFieldsExists();
                     $contactId = $contactService->searchContact($contact);
-
+                    
                     if (
                         $contactId !== 0 &&
                         $contactService->isContactHasSuccessfulLeads($contact) === true

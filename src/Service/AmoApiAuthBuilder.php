@@ -25,6 +25,17 @@ class AmoApiAuthBuilder
         ->setAccountBaseDomain($this->apiClientConfig['base_domain']);
     }
 
+    public static function getDefaultCredentials(): array
+    {
+        (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__).'/../.env');
+        return [
+            'redirect_uri' => getenv('REDIRECT_URI'),
+            'client_id' => getenv('INTEGRATION_ID'),
+            'client_secret' => getenv('SECRET'),
+            'base_domain' => getenv('BASE_DOMAIN')
+        ];
+    }
+
     public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 
     {
         (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__).'/../.env');
