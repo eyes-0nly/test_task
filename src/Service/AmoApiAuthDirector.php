@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use AmoCRM\Client\AmoCRMApiClient;
+use Symfony\Component\Dotenv\Dotenv;
 
 class AmoApiAuthDirector
 {
@@ -20,11 +21,12 @@ class AmoApiAuthDirector
 
     public static function getDefaultCredentials(): array
     {
+        (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__).'/../.env');
         return [
-            'redirect_uri' => $_ENV['REDIRECT_URI'],
-            'client_id' => $_ENV['INTEGRATION_ID'],
-            'client_secret' => $_ENV['SECRET'],
-            'base_domain' => $_ENV['BASE_DOMAIN']
+            'redirect_uri' => getenv('REDIRECT_URI'),
+            'client_id' => getenv('INTEGRATION_ID'),
+            'client_secret' => getenv('SECRET'),
+            'base_domain' => getenv('BASE_DOMAIN')
         ];
     }
 

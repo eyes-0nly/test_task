@@ -6,6 +6,7 @@ namespace App\Service;
 use AmoCRM\Client\AmoCRMApiClient;
 use League\OAuth2\Client\Token\AccessToken;
 use AmoCRM\Exceptions\AmoCRMApiException;
+use Symfony\Component\Dotenv\Dotenv;
 
 class AmoApiAuthBuilder
 {
@@ -26,7 +27,8 @@ class AmoApiAuthBuilder
 
     public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 
     {
-        $authToken =  $_ENV['AUTH_TOKEN'];
+        (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__).'/../.env');
+        $authToken =  getenv('AUTH_TOKEN');
 
         if (file_exists($tokenPath)) {
             $rawToken = json_decode(file_get_contents($tokenPath), true);
