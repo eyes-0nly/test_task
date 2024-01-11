@@ -262,7 +262,7 @@ class AmoApiContactService
             ->setCompleteTill($date->format('U'))
             ->setEntityType(EntityTypesInterface::LEADS)
             ->setEntityId($lead->getId())
-            ->setDuration(60 * 60 * 9) //в течение рабочего дня
+            ->setDuration(32400) //в течение рабочего дня
             ->setResponsibleUserId($randomUser['id']);
 
         $this->apiClient->tasks()->addOne($task);
