@@ -229,9 +229,10 @@ class AmoApiContactService
         //Привязываем два товара к сделке
         if ($products) {
             $links = new LinksCollection();
+            $chunksArray = $products->chunk(2);
+            $products = $chunksArray[0];
 
-            for ($i = 0; $i < 2; $i++) {
-                $product = $products[$i];
+            foreach ($products as $product){
                 $links->add($product);
             }
 
@@ -275,7 +276,7 @@ class AmoApiContactService
 
         //Привяжем контакт к созданному покупателю
         $contact = (new ContactModel())
-        ->setId($contactId);
+            ->setId($contactId);
 
         $links = new LinksCollection();
         $links->add($contact);
