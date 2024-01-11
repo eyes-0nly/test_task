@@ -55,8 +55,6 @@ class AmoApiAuthBuilder
 
         $this->apiClient->setAccessToken($accessToken);
 
-        $this->apiClient->account()->getCurrent();
-
         return $this->apiClient;
     }
 
