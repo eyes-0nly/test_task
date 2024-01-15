@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use AmoCRM\Client\AmoCRMApiClient;
@@ -335,7 +337,7 @@ class AmoApiContactService
         $task
             ->setTaskTypeId(TaskModel::TASK_TYPE_ID_FOLLOW_UP)
             ->setText(self::TASK_TEXT)
-            ->setCompleteTill($date->format('U'))
+            ->setCompleteTill((int) $date->format('U'))
             ->setEntityType(EntityTypesInterface::LEADS)
             ->setEntityId($lead->getId())
             ->setDuration(self::WORK_HOURS) //в течение рабочего дня
