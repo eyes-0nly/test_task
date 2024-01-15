@@ -6,6 +6,7 @@ namespace App\Service;
 use AmoCRM\Client\AmoCRMApiClient;
 use App\Service\AmoApiAuthBuilder;
 use App\Service\AmoApiAuthConfigurator;
+use Psr\Log\LoggerInterface;
 
 class AmoApiAuthDirector
 {
@@ -13,9 +14,9 @@ class AmoApiAuthDirector
 
     private string $tokenPath;
 
-    public function __construct(AmoApiAuthConfigurator $config)
+    public function __construct(AmoApiAuthConfigurator $config, LoggerInterface $logger)
     {
-        $this->builder = new AmoApiAuthBuilder($config);
+        $this->builder = new AmoApiAuthBuilder($config, $logger);
         $this->tokenPath = ($this->builder->getApiClientConfig())->getTokenPath();
     }
 

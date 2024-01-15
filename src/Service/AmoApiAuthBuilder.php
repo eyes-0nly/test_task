@@ -7,24 +7,32 @@ use AmoCRM\Client\AmoCRMApiClient;
 use League\OAuth2\Client\Token\AccessToken;
 use AmoCRM\Exceptions\AmoCRMApiException;
 use Symfony\Component\Dotenv\Dotenv;
-use App\Service\AmoApiAuthConfigurator;
+use Psr\Log\LoggerInterface;
 
 class AmoApiAuthBuilder
 {
     private AmoCRMApiClient $apiClient;
 
     private AmoApiAuthConfigurator $apiClientConfig;
+    
+    private LoggerInterface $logger;
 
-    public function __construct(AmoApiAuthConfigurator $apiClientConfig)
+    public function __construct(AmoApiAuthConfigurator $apiClientConfig, LoggerInterface $logger)
     {
         $this->apiClientConfig = $apiClientConfig;
+
+        $this->logger = $logger;
     }
 
     public function init(): void 
     {
         $credentials = $this->apiClientConfig->getCredentials();
-        $this->apiClient = (new AmoCRMApiClient($credentials['client_id'], $credentials['client_secret'], $credentials['redirect_uri']))
-        ->setAccountBaseDomain($credentials['base_domain']);
+        $this->apiClient = (
+            new AmoCRMApiClient($credentials['client_id'],
+                $credentials['client_secret'],
+                $credentials['redirect_uri'])
+                )
+                    ->setAccountBaseDomain($credentials['base_domain']);
     }
 
     public function getApiClientConfig() {
@@ -40,7 +48,11 @@ class AmoApiAuthBuilder
             $rawToken = json_decode(file_get_contents($tokenPath), true);
             $accessToken = new AccessToken($rawToken);
         } else {
-            $accessToken = $this->getAccessAndRefreshToken($tokenPath, $authToken);
+            try {
+                $accessToken = $this->getAccessAndRefreshToken($tokenPath, $authToken);
+            } catch (AmoCRMApiException $e) {
+                $this->logger->error('Auth token has been revoked.');
+            }
         }
 
         if ($accessToken->hasExpired()) {
@@ -76,7 +88,7 @@ class AmoApiAuthBuilder
             return $accessToken;
         } catch (AmoCRMApiException $e) {
             if ($e->getErrorCode() === 400) {
-                echo('Auth token has been revoked. Set new one in .env file.');
+                throw $e;
             }
         }
     }
