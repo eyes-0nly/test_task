@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Controller;
@@ -23,23 +24,22 @@ class ContactController extends AbstractController
         return $this->render(self::FORM_TEMPLATE);
     }
 
-    #[Route('/contact/add', name: 'app_contact_add', methods: ['POST'])]
+    #[Route('/contacts', name: 'app_contact_add', methods: ['POST'])]
     public function add(
         Request $request,
         ValidatorInterface $validator,
         AmoApiAuthDirector $authDirector,
         AmoApiContactService $contactService
     ): Response {
-        $parameters = [];
         if ($content = $request->getContent()) {
             $parameters = json_decode($content, true);
             if (
-                isset($parameters['name']) &&
-                isset($parameters['lastname']) &&
-                isset($parameters['sex']) &&
-                isset($parameters['age']) &&
-                isset($parameters['phone']) &&
-                isset($parameters['email'])
+                isset($parameters['name'],
+                    $parameters['lastname'],
+                    $parameters['sex'],
+                    $parameters['age'],
+                    $parameters['phone'],
+                    $parameters['email'])
             ) {
                 $contact = new ContactDto();
                 $contact
@@ -52,49 +52,49 @@ class ContactController extends AbstractController
                 $errors = $validator->validate($contact);
 
                 //Проверяем валидацию контакта
-                if (count($errors) > 0) {
+                if ($errors->count() > 0) {
                     $errorsString = (string) $errors;
 
                     return new JsonResponse([
-                        'status' => 'error',
+                        'code' => Response::HTTP_BAD_REQUEST,
                         'msg' => $errorsString,
                     ]);
-                } else {
-                    $apiClient = $authDirector
-                        ->buildAuthentication()
-                        ->getAuthenticatedClient();
-                    $contactService = $contactService->setClient($apiClient);
-                    $contactService->checkIfCustomFieldsExists();
-                    $contactId = $contactService->searchContact($contact);
+                }
+
+                $apiClient = $authDirector
+                    ->buildAuthentication()
+                    ->getAuthenticatedClient();
+                $contactService = $contactService->setClient($apiClient);
+                $contactService->checkIfCustomFieldsExists();
+                $contactId = $contactService->searchContact($contact);
                     
-                    if (
-                        $contactId !== 0 &&
-                        $contactService->isContactHasSuccessfulLeads($contact) === true
-                    ) {
-                        $contactService->sendCustomer($contactId);
+                if (
+                    $contactId !== 0 &&
+                    $contactService->isContactHasSuccessfulLeads($contact) === true
+                ) {
+                    $contactService->sendCustomer($contactId);
 
-                        return new JsonResponse([
-                            'status' => 'ok',
-                            'msg' => 'Added customer',
-                        ]);
-                    } else {
-                        $contactService->sendLeadConnectedToContact($contact);
+                    return new JsonResponse([
+                        'code' => Response::HTTP_OK,
+                        'msg' => 'Added customer',
+                    ]);
+                } else {
+                    $contactService->sendLeadConnectedToContact($contact);
 
-                        return new JsonResponse([
-                            'status' => 'ok',
-                            'msg' => 'Added lead',
-                        ]);
-                    }
+                    return new JsonResponse([
+                        'code' => Response::HTTP_OK,
+                        'msg' => 'Added lead',
+                    ]);
                 }
             } else {
                 return new JsonResponse([
-                    'status' => 'error',
+                    'code' => Response::HTTP_BAD_REQUEST,
                     'msg' => 'Not enough parameters in json form data',
                 ]);
             }
         } else {
             return new JsonResponse([
-                'status' => 'error',
+                'code' => Response::HTTP_BAD_REQUEST,
                 'msg' => 'No parameters in request',
             ]);
         }
