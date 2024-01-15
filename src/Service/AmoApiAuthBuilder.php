@@ -55,10 +55,8 @@ class AmoApiAuthBuilder
             }
         }
 
-        if ($accessToken->hasExpired()) {
-            $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByRefreshToken($accessToken);
-            $this->saveAccessTokenToJsonFile($accessToken, $tokenPath);
-        }
+        $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByRefreshToken($accessToken);
+
 
         return $accessToken;
 
@@ -73,8 +71,13 @@ class AmoApiAuthBuilder
     {
         $accessToken = $this->getAccessTokenFromJsonFile($tokenPath);
 
+        $this->apiClient
+            ->getOAuthClient()
+            ->setAccessTokenRefreshCallback(
+                function (AccessToken $accessToken, string $tokenPath) {
+                    $this->saveAccessTokenToJsonFile($accessToken, $tokenPath);
+                });
         $this->apiClient->setAccessToken($accessToken);
-            
 
         return $this->apiClient;
     }
