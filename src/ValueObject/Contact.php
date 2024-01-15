@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto;
+namespace App\ValueObject;
 
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Type;
@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\Regex;
 use Symfony\Component\Validator\Constraints\Range;
 
-class ContactDto 
+class Contact 
 {
 
     #[Type('string')]
@@ -30,7 +30,7 @@ class ContactDto
         minMessage: 'Your last name must be at least {{ limit }} characters long',
         maxMessage: 'Your last name cannot be longer than {{ limit }} characters',
     )]
-    private string $lastname;
+    private string $lastName;
 
     #[Type('string')]
     #[NotBlank()]
@@ -39,9 +39,9 @@ class ContactDto
 
     #[Type('integer')]
     #[Range(
+        notInRangeMessage: 'Your age must be above {{ min }} and less than {{ max }}',
         min: 18,
         max: 150,
-        notInRangeMessage: 'Your age must be above {{ min }} and less than {{ max }}',
     )]
     private int $age;
 
@@ -66,7 +66,7 @@ class ContactDto
     )]
     private string $email;
 
-    public function setName(string $name)
+    public function setName(string $name): self
     {
         $this->name = $name;
 
@@ -78,19 +78,19 @@ class ContactDto
         return $this->name;
     }
 
-    public function setLastname(string $lastname)
+    public function setLastName(string $lastName): self
     {
-        $this->lastname = $lastname;
+        $this->lastName = $lastName;
 
         return $this;
     }
 
-    public function getLastname(): string
+    public function getLastName(): string
     {
-        return $this->lastname;
+        return $this->lastName;
     }
 
-    public function setSex(string $sex)
+    public function setSex(string $sex): self
     {
         $this->sex = $sex;
 
@@ -102,7 +102,7 @@ class ContactDto
         return $this->sex;
     }
 
-    public function setAge(int $age)
+    public function setAge(int $age): self
     {
         $this->age = $age;
 
@@ -114,7 +114,7 @@ class ContactDto
         return $this->age;
     }
 
-    public function setPhone(string $phone)
+    public function setPhone(string $phone): self
     {
         $this->phone = $phone;
 
@@ -126,7 +126,7 @@ class ContactDto
         return $this->phone;
     }
 
-    public function setEmail(string $email)
+    public function setEmail(string $email): self
     {
         $this->email = $email;
 

@@ -33,7 +33,7 @@ use AmoCRM\Models\CustomFieldsValues\ValueModels\SelectCustomFieldValueModel;
 
 use DateTime;
 use DateTimeZone;
-use App\Dto\ContactDto;
+use App\ValueObject\Contact;
 
 class AmoApiContactService
 {
@@ -96,24 +96,24 @@ class AmoApiContactService
         }
     }
 
-    public function searchContact(ContactDto $contactDto): int
+    public function searchContact(Contact $contact): int
     {
         try {
             $contacts = $this->apiClient
                 ->contacts()
-                ->get((new ContactsFilter())->setQuery($contactDto->getPhone()));
+                ->get((new ContactsFilter())->setQuery($contact->getPhone()));
 
             return $contacts->first()->getId();
         } catch (AmoCRMApiException $e) {
             return 0;
         }
     }
-    public function isContactHasSuccessfulLeads(ContactDto $contactDto): bool
+    public function isContactHasSuccessfulLeads(Contact $contact): bool
     {
         try {
             $leads = $this->apiClient
                 ->leads()
-                ->get((new LeadsFilter())->setQuery($contactDto->getPhone()));
+                ->get((new LeadsFilter())->setQuery($contact->getPhone()));
 
             if (isset($leads)) {
                 $leads = $leads->getBy('statusId', LeadModel::WON_STATUS_ID);
@@ -130,17 +130,17 @@ class AmoApiContactService
         }
     }
 
-    public function sendLeadConnectedToContact(ContactDto $contactDto): void
+    public function sendLeadConnectedToContact(Contact $contact): void
     {
         //Создаем модель контакта
-        $contact = new ContactModel();
-        $contact
-            ->setName(sprintf('%s %s', $contactDto->getName(), $contactDto->getLastname()))
-            ->setFirstName($contactDto->getName())
-            ->setLastName($contactDto->getLastname());
+        $contactModel = new ContactModel();
+        $contactModel
+            ->setName(sprintf('%s %s', $contact->getName(), $contact->getLastName()))
+            ->setFirstName($contact->getName())
+            ->setLastName($contact->getLastName());
 
         //Добавляем значение кастомных полей в модель
-        $contact->setCustomFieldsValues(
+        $contactModel->setCustomFieldsValues(
             (new CustomFieldsValuesCollection())
                 ->add(
                     (new MultitextCustomFieldValuesModel())
@@ -149,7 +149,7 @@ class AmoApiContactService
                             (new MultitextCustomFieldValueCollection())->add(
                                 (new MultitextCustomFieldValueModel())
                                     ->setEnum('WORK')
-                                    ->setValue($contactDto->getPhone())
+                                    ->setValue($contact->getPhone())
                             )
                         )
                 )
@@ -159,7 +159,7 @@ class AmoApiContactService
                         ->setValues(
                             (new SelectCustomFieldValueCollection())->add(
                                 (new SelectCustomFieldValueModel())->setEnumCode(
-                                    $contactDto->getSex()
+                                    $contact->getSex()
                                 )
                             )
                         )
@@ -170,7 +170,7 @@ class AmoApiContactService
                         ->setValues(
                             (new NumericCustomFieldValueCollection())->add(
                                 (new NumericCustomFieldValueModel())->setValue(
-                                    $contactDto->getAge()
+                                    $contact->getAge()
                                 )
                             )
                         )
@@ -182,7 +182,7 @@ class AmoApiContactService
                             (new MultitextCustomFieldValueCollection())->add(
                                 (new MultitextCustomFieldValueModel())
                                     ->setEnum('WORK')
-                                    ->setValue($contactDto->getEmail())
+                                    ->setValue($contact->getEmail())
                             )
                         )
                 )
@@ -209,7 +209,7 @@ class AmoApiContactService
         $lead = new LeadModel();
         $lead
             ->setResponsibleUserId($randomUser['id'])
-            ->setContacts((new ContactsCollection())->add($contact))
+            ->setContacts((new ContactsCollection())->add($contactModel))
             ->setCompany($company);
 
         $lead = $this->apiClient->leads()->addOneComplex($lead);
@@ -239,7 +239,7 @@ class AmoApiContactService
             $this->apiClient->leads()->link($lead, $links);
         }
 
-        //Добавим задачу отвественному
+        //Добавим задачу ответственному
         $task = new TaskModel();
 
         //Устанавливаем время для задачи (+4 дня или до понедельника)

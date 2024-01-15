@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
-use App\Dto\ContactDto;
+use App\ValueObject\Contact;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Service\AmoApiAuthDirector;
 use App\Service\AmoApiContactService;
@@ -41,7 +41,7 @@ class ContactController extends AbstractController
                     $parameters['phone'],
                     $parameters['email'])
             ) {
-                $contact = new ContactDto();
+                $contact = new Contact();
                 $contact
                     ->setName($parameters['name'])
                     ->setLastname($parameters['lastname'])
