@@ -20,7 +20,7 @@ class AmoApiAuthDirector
         $this->tokenPath = ($this->builder->getApiClientConfig())->getTokenPath();
     }
 
-    public function buildAuthentication(AmoApiAuthConfigurator $config = null): self
+    public function buildAuthentication(): self
     {
         $this->builder->init();
 

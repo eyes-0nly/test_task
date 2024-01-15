@@ -66,11 +66,11 @@ class ContactController extends AbstractController
                     ->getAuthenticatedClient();
                 $contactService = $contactService->setClient($apiClient);
                 $contactService->checkIfCustomFieldsExists();
-                $contactId = $contactService->searchContact($contact);
+                $contactId = $contactService->getContactId($contact);
                     
                 if (
-                    $contactId !== 0 &&
-                    $contactService->isContactHasSuccessfulLeads($contact) === true
+                    $contactId &&
+                    $contactService->isContactHasSuccessfulLeads($contact)
                 ) {
                     $contactService->sendCustomer($contactId);
 

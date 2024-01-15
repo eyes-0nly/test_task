@@ -41,7 +41,7 @@ class AmoApiAuthBuilder
 
     public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 
     {
-        (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__).'/../.env');
+        (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__) . '/../.env');
         $authToken =  getenv('AUTH_TOKEN');
 
         if (file_exists($tokenPath)) {
@@ -74,6 +74,7 @@ class AmoApiAuthBuilder
         $accessToken = $this->getAccessTokenFromJsonFile($tokenPath);
 
         $this->apiClient->setAccessToken($accessToken);
+            
 
         return $this->apiClient;
     }
