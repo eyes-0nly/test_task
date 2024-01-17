@@ -33,8 +33,8 @@ class AmoApiAuthBuilder
                 $credentials['client_id'],
                 $credentials['client_secret'],
                 $credentials['redirect_uri']
-            )
-        )->setAccountBaseDomain($credentials['base_domain']);
+            ))
+                ->setAccountBaseDomain($credentials['base_domain']);
     }
 
     public function getApiClientConfig() {

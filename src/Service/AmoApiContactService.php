@@ -295,7 +295,7 @@ class AmoApiContactService
         $this->apiClient->customers()->link($customer, $links);
     }
 
-    public function addTask(LeadModel $lead, int $userId): void {
+    private function addTask(LeadModel $lead, int $userId): void {
         //Добавим задачу ответственному
         $task = new TaskModel();
 
