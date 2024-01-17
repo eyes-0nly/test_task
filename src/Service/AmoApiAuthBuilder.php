@@ -9,6 +9,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use AmoCRM\Exceptions\AmoCRMApiException;
 use Symfony\Component\Dotenv\Dotenv;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 class AmoApiAuthBuilder
 {
@@ -43,7 +44,7 @@ class AmoApiAuthBuilder
     public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 
     {
         (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__) . '/../.env');
-        $authToken =  getenv('AUTH_TOKEN');
+        $authToken = getenv('AUTH_TOKEN') ?? '';
 
         if (file_exists($tokenPath)) {
             $rawToken = json_decode(file_get_contents($tokenPath), true);
@@ -55,9 +56,6 @@ class AmoApiAuthBuilder
                 $this->logger->error('Auth token has been revoked.');
             }
         }
-
-        $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByRefreshToken($accessToken);
-
 
         return $accessToken;
 
@@ -77,7 +75,8 @@ class AmoApiAuthBuilder
             ->setAccessTokenRefreshCallback(
                 function (AccessToken $accessToken, string $tokenPath) {
                     $this->saveAccessTokenToJsonFile($accessToken, $tokenPath);
-                });
+                }
+            );
         $this->apiClient->setAccessToken($accessToken);
 
         return $this->apiClient;
@@ -92,7 +91,7 @@ class AmoApiAuthBuilder
 
             return $accessToken;
         } catch (AmoCRMApiException $e) {
-            if ($e->getErrorCode() === 400) {
+            if ($e->getErrorCode() === Response::HTTP_BAD_REQUEST) {
                 throw $e;
             }
         }

@@ -34,12 +34,14 @@ class ContactController extends AbstractController
         if ($content = $request->getContent()) {
             $parameters = json_decode($content, true);
             if (
-                isset($parameters['name'],
+                isset(
+                    $parameters['name'],
                     $parameters['lastname'],
                     $parameters['sex'],
                     $parameters['age'],
                     $parameters['phone'],
-                    $parameters['email'])
+                    $parameters['email']
+                )
             ) {
                 $contact = new Contact();
                 $contact
@@ -53,7 +55,11 @@ class ContactController extends AbstractController
 
                 //Проверяем валидацию контакта
                 if ($errors->count() > 0) {
-                    $errorsString = (string) $errors;
+                    $errorsString = 'Validation errors: ';
+
+                    foreach ($errors as $error) {
+                        $errorsString .= sprintf('%s %s;', $error->getCode(), $error->getMessage());
+                    }
 
                     return new JsonResponse([
                         'code' => Response::HTTP_BAD_REQUEST,
@@ -69,8 +75,7 @@ class ContactController extends AbstractController
                 $contactId = $contactService->getContactId($contact);
                     
                 if (
-                    $contactId &&
-                    $contactService->isContactHasSuccessfulLeads($contact)
+                    $contactId && $contactService->isContactHasSuccessfulLeads($contact)
                 ) {
                     $contactService->sendCustomer($contactId);
 
@@ -78,14 +83,13 @@ class ContactController extends AbstractController
                         'code' => Response::HTTP_OK,
                         'msg' => 'Added customer',
                     ]);
-                } else {
-                    $contactService->sendLeadConnectedToContact($contact);
-
-                    return new JsonResponse([
-                        'code' => Response::HTTP_OK,
-                        'msg' => 'Added lead',
-                    ]);
                 }
+                $contactService->sendLeadConnectedToContact($contact);
+
+                return new JsonResponse([
+                    'code' => Response::HTTP_OK,
+                    'msg' => 'Added lead',
+                ]);
             } else {
                 return new JsonResponse([
                     'code' => Response::HTTP_BAD_REQUEST,

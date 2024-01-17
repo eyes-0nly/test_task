@@ -19,10 +19,10 @@ class AmoApiAuthConfigurator
         (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__) . '/../.env');
 
         $this->credentials = [ 
-            'client_id' => getenv('INTEGRATION_ID'),
-            'client_secret' => getenv('SECRET'),
-            'redirect_uri' => getenv('REDIRECT_URI'),
-            'base_domain' => getenv('BASE_DOMAIN'),
+            'client_id' => getenv('INTEGRATION_ID') ?? '',
+            'client_secret' => getenv('SECRET') ?? '',
+            'redirect_uri' => getenv('REDIRECT_URI') ?? '',
+            'base_domain' => getenv('BASE_DOMAIN') ?? '',
         ];
         
         $this->tokenPath = self::TOKEN_PATH;

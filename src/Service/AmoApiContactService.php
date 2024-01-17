@@ -85,7 +85,7 @@ class AmoApiContactService
         $customFieldsCollection = new CustomFieldsCollection();
 
         //Проверяем, есть ли поля, если нет создаем
-        if (empty($fields->getBy('code', self::SEX_CODE))) {
+        if ($fields->getBy('code', self::SEX_CODE) === null) {
             $sex = new SelectCustomFieldModel();
             $sex->setName(self::SEX_NAME)
                 ->setSort(30)
@@ -109,7 +109,7 @@ class AmoApiContactService
             $customFieldsCollection->add($sex);
         }
 
-        if (empty($fields->getBy('code', self::AGE_CODE))) {
+        if ($fields->getBy('code', self::AGE_CODE) === null) {
             $age = new NumericCustomFieldModel();
             $age->setName(self::AGE_NAME)
                 ->setSort(40)
@@ -119,13 +119,11 @@ class AmoApiContactService
         }
 
         if (!$customFieldsCollection->isEmpty()) {
-            $customFieldsService->add(
-                $customFieldsCollection
-            );
+            $customFieldsService->add($customFieldsCollection);
         }
     }
 
-    public function getContactId(Contact $contact)
+    public function getContactId(Contact $contact): int|null
     {
         try {
             $contacts = $this->apiClient
@@ -144,7 +142,7 @@ class AmoApiContactService
             }
         }
     }
-    public function isContactHasSuccessfulLeads(Contact $contact)
+    public function isContactHasSuccessfulLeads(Contact $contact): bool|null
     {
         try {
             $leads = $this->apiClient
