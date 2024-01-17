@@ -29,12 +29,12 @@ class AmoApiAuthBuilder
     public function init(): void 
     {
         $credentials = $this->apiClientConfig->getCredentials();
-        $this->apiClient = (
-            new AmoCRMApiClient($credentials['client_id'],
+        $this->apiClient = (new AmoCRMApiClient(
+                $credentials['client_id'],
                 $credentials['client_secret'],
-                $credentials['redirect_uri'])
-                )
-                    ->setAccountBaseDomain($credentials['base_domain']);
+                $credentials['redirect_uri']
+            )
+        )->setAccountBaseDomain($credentials['base_domain']);
     }
 
     public function getApiClientConfig() {

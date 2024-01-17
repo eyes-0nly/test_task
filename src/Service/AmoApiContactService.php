@@ -13,7 +13,6 @@ use AmoCRM\Models\CustomFieldsValues\ValueModels\MultitextCustomFieldValueModel;
 use AmoCRM\Collections\CustomFieldsValuesCollection;
 use AmoCRM\Collections\ContactsCollection;
 use AmoCRM\Collections\LinksCollection;
-use AmoCRM\Models\CompanyModel;
 use AmoCRM\Models\Customers\CustomerModel;
 use AmoCRM\Models\LeadModel;
 use AmoCRM\Models\TaskModel;
@@ -32,6 +31,8 @@ use AmoCRM\Models\CustomFieldsValues\ValueModels\NumericCustomFieldValueModel;
 use AmoCRM\Models\CustomFieldsValues\SelectCustomFieldValuesModel;
 use AmoCRM\Models\CustomFieldsValues\ValueCollections\SelectCustomFieldValueCollection;
 use AmoCRM\Models\CustomFieldsValues\ValueModels\SelectCustomFieldValueModel;
+use App\Exception\EntityNotFoundException;
+use Symfony\Component\HttpFoundation\Response;
 
 use DateTime;
 use DateTimeZone;
@@ -130,16 +131,16 @@ class AmoApiContactService
                 ->contacts()
                 ->get((new ContactsFilter())->setQuery($contact->getPhone()));
             if (is_null($contacts)) {
-                throw new Exception('No contacts found');
+                throw EntityNotFoundException::create('No contacts found');
             }
 
-            return $contacts->first()->getId();
+            return $contacts->first()?->getId();
         } catch (AmoCRMApiException $e) {
-            if ($e->getMessage() === 'No content') {
+            if ($e->getErrorCode() === Response::HTTP_NO_CONTENT) {
                 return null;
-            } else {
-                throw $e;
             }
+            
+            throw $e;
         }
     }
     public function isContactHasSuccessfulLeads(Contact $contact): bool|null
@@ -149,23 +150,13 @@ class AmoApiContactService
                 ->leads()
                 ->get((new LeadsFilter())->setQuery($contact->getPhone()));
 
-            if (isset($leads)) {
-                $leads = $leads->getBy('statusId', LeadModel::WON_STATUS_ID);
-                if ($leads) {
-                    return true;
-                }
-
-                return false;
-
-            } else {
-                return false;
-            }
+            return isset($leads) && $leads->getBy('statusId', LeadModel::WON_STATUS_ID);
         } catch (AmoCRMApiException $e) {
-            if ($e->getMessage() === 'No content') {
+            if ($e->getErrorCode() === Response::HTTP_NO_CONTENT) {
                 return null;
-            } else {
-                throw $e;
             }
+
+            throw $e;
         }
     }
 
@@ -227,37 +218,22 @@ class AmoApiContactService
                 )
         );
 
-        //Добавим компанию для сделки
-        try {
-            $company = $this->apiClient
-                ->companies()
-                ->get()
-                ->first();
-            if (is_null($company)) {
-                throw new Exception('No companies found');
-            }
-        } catch (AmoCRMApiException $e) {
-            if ($e->getMessage() === 'No content') {
-                $company = new CompanyModel();
-                $company->setName('Компания ' . random_int(1, 1000));
-                $company = $this->apiClient->companies()->addOne($company);
-            }
-        }
-
         //Выбираем рандомного пользователя
         $usersCollection = $this->apiClient->users()->get();
         if (is_null($usersCollection)) {
-            throw new Exception('No users found');
+            throw EntityNotFoundException::create('No users found');
         }
 
         $randomUser = $usersCollection->offsetGet(random_int(0, $usersCollection->count() - 1));
+        if (is_null($randomUser)) {
+            throw EntityNotFoundException::create('Offset is not found in collection');
+        }
 
         //Создаем сделку
         $lead = new LeadModel();
         $lead
             ->setResponsibleUserId($randomUser->getId())
-            ->setContacts((new ContactsCollection())->add($contactModel))
-            ->setCompany($company);
+            ->setContacts((new ContactsCollection())->add($contactModel));
 
         $lead = $this->apiClient->leads()->addOneComplex($lead);
 
@@ -268,14 +244,18 @@ class AmoApiContactService
                 ->get((new CatalogsFilter())->setType(EntityTypesInterface::PRODUCTS));
 
             if (is_null($productsCatalog)) {
-                throw new Exception('No catalogs found');
+                throw EntityNotFoundException::create('No catalogs found');
             }
 
             $products = $this->apiClient
-                ->catalogElements($productsCatalog->first()->getId())
+                ->catalogElements($productsCatalog->first()?->getId())
                 ->get();
+            
+            if (is_null($products)) {
+                $products = [];
+            }
         } catch (AmoCRMApiException $e) {
-            if ($e->getMessage() === 'No content') {
+            if ($e->getErrorCode() === Response::HTTP_NO_CONTENT) {
                 $products = [];
             }
         }
@@ -283,14 +263,15 @@ class AmoApiContactService
         //Привязываем два товара к сделке
         if (!$products->isEmpty()) {
             $links = new LinksCollection();
-            $chunks = $products->chunk(2);
-            $products = $chunks[0];
+            $products = $products->chunk(2)[0] ?? [];
 
             foreach ($products as $product){
                 $links->add($product);
             }
 
-            $this->apiClient->leads()->link($lead, $links);
+            if (!$links->isEmpty()) {
+                $this->apiClient->leads()->link($lead, $links);
+            }
         }
 
         //Добавляем задачу
@@ -309,8 +290,7 @@ class AmoApiContactService
         $contact = (new ContactModel())
             ->setId($contactId);
 
-        $links = new LinksCollection();
-        $links->add($contact);
+        $links = (new LinksCollection())->add($contact);
 
         $this->apiClient->customers()->link($customer, $links);
     }
