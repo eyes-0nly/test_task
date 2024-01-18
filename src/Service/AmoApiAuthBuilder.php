@@ -37,7 +37,8 @@ class AmoApiAuthBuilder
                 ->setAccountBaseDomain($credentials['base_domain']);
     }
 
-    public function getApiClientConfig() {
+    public function getApiClientConfig() 
+    {
         return $this->apiClientConfig;
     }
 
@@ -58,7 +59,6 @@ class AmoApiAuthBuilder
         }
 
         return $accessToken;
-
     }
 
     private function saveAccessTokenToJsonFile(AccessToken $accessToken, string $tokenPath): void 
@@ -69,6 +69,9 @@ class AmoApiAuthBuilder
     public function getAuthClient(string $tokenPath): AmoCRMApiClient
     {
         $accessToken = $this->getAccessTokenFromJsonFile($tokenPath);
+        if  (is_null($accessToken)) {
+            throw new AmoCRMApiException('Unable to get AccessToken');
+        }
 
         $this->apiClient
             ->getOAuthClient()
@@ -83,8 +86,8 @@ class AmoApiAuthBuilder
     }
 
     //нужно если ключ авторизации устарел 
-    private function getAccessAndRefreshToken(string $tokenPath, string $authToken): ?AccessToken {
-
+    private function getAccessAndRefreshToken(string $tokenPath, string $authToken): ?AccessToken 
+    {
         try {
             $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByCode($authToken);
             $this->saveAccessTokenToJsonFile($accessToken, $tokenPath);
