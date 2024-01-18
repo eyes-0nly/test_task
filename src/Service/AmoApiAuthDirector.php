@@ -18,7 +18,7 @@ class AmoApiAuthDirector
     public function __construct(AmoApiAuthConfigurator $config, LoggerInterface $logger)
     {
         $this->builder = new AmoApiAuthBuilder($config, $logger);
-        $this->tokenPath = ($this->builder->getApiClientConfig())->getTokenPath();
+        $this->tokenPath = $this->builder->getApiClientConfig()->getTokenPath();
     }
 
     public function buildAuthentication(): self

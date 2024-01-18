@@ -6,7 +6,8 @@ namespace App\Exception;
 
 class EntityNotFoundException extends \Exception
 {
-    public static function create(string $message) {
+    public static function create(string $message): self
+    {
         return new static($message);
     }
 }

@@ -41,7 +41,7 @@ class AmoApiAuthBuilder
         return $this->apiClientConfig;
     }
 
-    public function getAccessTokenFromJsonFile(string $tokenPath): AccessToken 
+    public function getAccessTokenFromJsonFile(string $tokenPath): ?AccessToken
     {
         (new Dotenv())->usePutenv()->bootEnv(dirname(__DIR__) . '/../.env');
         $authToken = getenv('AUTH_TOKEN') ?? '';
@@ -61,7 +61,7 @@ class AmoApiAuthBuilder
 
     }
 
-    public function saveAccessTokenToJsonFile(AccessToken $accessToken, string $tokenPath): void 
+    private function saveAccessTokenToJsonFile(AccessToken $accessToken, string $tokenPath): void 
     {
         file_put_contents($tokenPath, json_encode($accessToken->jsonSerialize(), JSON_PRETTY_PRINT));
     }
@@ -83,7 +83,7 @@ class AmoApiAuthBuilder
     }
 
     //нужно если ключ авторизации устарел 
-    public function getAccessAndRefreshToken(string $tokenPath, string $authToken) {
+    private function getAccessAndRefreshToken(string $tokenPath, string $authToken): ?AccessToken {
 
         try {
             $accessToken = $this->apiClient->getOAuthClient()->getAccessTokenByCode($authToken);

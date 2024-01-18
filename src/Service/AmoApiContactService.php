@@ -78,11 +78,13 @@ class AmoApiContactService
 
     public function checkIfCustomFieldsExists(): void
     {
-        $customFieldsService = $this->apiClient->customFields(
-            EntityTypesInterface::CONTACTS
-        );
+        $customFieldsService = $this->apiClient->customFields(EntityTypesInterface::CONTACTS);
 
         $fields = $customFieldsService->get();
+        if (is_null($fields)){
+            throw EntityNotFoundException::create('No fields found');
+        }
+
         $customFieldsCollection = new CustomFieldsCollection();
 
         //Проверяем, есть ли поля, если нет создаем
@@ -124,7 +126,7 @@ class AmoApiContactService
         }
     }
 
-    public function getContactId(Contact $contact): int|null
+    public function getContactId(Contact $contact): ?int
     {
         try {
             $contacts = $this->apiClient
@@ -143,7 +145,7 @@ class AmoApiContactService
             throw $e;
         }
     }
-    public function isContactHasSuccessfulLeads(Contact $contact): bool|null
+    public function isContactHasSuccessfulLeads(Contact $contact): ?bool
     {
         try {
             $leads = $this->apiClient
@@ -160,7 +162,7 @@ class AmoApiContactService
         }
     }
 
-    public function sendLeadConnectedToContact(Contact $contact): void
+    public function createLeadWithContact(Contact $contact): void
     {
         //Создаем модель контакта
         $contactModel = new ContactModel();
@@ -226,7 +228,7 @@ class AmoApiContactService
 
         $randomUser = $usersCollection->offsetGet(random_int(0, $usersCollection->count() - 1));
         if (is_null($randomUser)) {
-            throw EntityNotFoundException::create('Offset is not found in collection');
+            throw EntityNotFoundException::create('User not found in account');
         }
 
         //Создаем сделку
@@ -238,40 +240,31 @@ class AmoApiContactService
         $lead = $this->apiClient->leads()->addOneComplex($lead);
 
         // Получаем список товаров
-        try {
-            $productsCatalog = $this->apiClient
-                ->catalogs()
-                ->get((new CatalogsFilter())->setType(EntityTypesInterface::PRODUCTS));
+        $productsCatalog = $this->apiClient
+            ->catalogs()
+            ->get((new CatalogsFilter())->setType(EntityTypesInterface::PRODUCTS));
 
-            if (is_null($productsCatalog)) {
-                throw EntityNotFoundException::create('No catalogs found');
-            }
+        if (is_null($productsCatalog)) {
+            throw EntityNotFoundException::create('No catalogs found');
+        }
 
-            $products = $this->apiClient
-                ->catalogElements($productsCatalog->first()?->getId())
-                ->get();
-            
-            if (is_null($products)) {
-                $products = [];
-            }
-        } catch (AmoCRMApiException $e) {
-            if ($e->getErrorCode() === Response::HTTP_NO_CONTENT) {
-                $products = [];
-            }
+        $products = $this->apiClient
+            ->catalogElements($productsCatalog->first()?->getId())
+            ->get();
+        if (is_null($products)) {
+            throw EntityNotFoundException::create('No products found');
         }
 
         //Привязываем два товара к сделке
-        if (!$products->isEmpty()) {
-            $links = new LinksCollection();
-            $products = $products->chunk(2)[0] ?? [];
+        $links = new LinksCollection();
+        $products = $products->chunk(2)[0] ?? [];
 
-            foreach ($products as $product){
-                $links->add($product);
-            }
+        foreach ($products as $product){
+            $links->add($product);
+        }
 
-            if (!$links->isEmpty()) {
-                $this->apiClient->leads()->link($lead, $links);
-            }
+        if (!$links->isEmpty()) {
+            $this->apiClient->leads()->link($lead, $links);
         }
 
         //Добавляем задачу
@@ -279,7 +272,7 @@ class AmoApiContactService
 
     }
 
-    public function sendCustomer(int $contactId): void
+    public function createCustomer(int $contactId): void
     {
         //Создадим покупателя
         $customer = new CustomerModel();
@@ -295,7 +288,8 @@ class AmoApiContactService
         $this->apiClient->customers()->link($customer, $links);
     }
 
-    private function addTask(LeadModel $lead, int $userId): void {
+    private function addTask(LeadModel $lead, int $userId): void 
+    {
         //Добавим задачу ответственному
         $task = new TaskModel();
 
@@ -304,7 +298,7 @@ class AmoApiContactService
         $date = new DateTime();
         $date->setTimezone($tz);
         $date->modify('+5 day');
-        $date->setTime(9, 0, 0, 0);
+        $date->setTime(9, 0);
         $dayOfTheWeek = $date->format('N');
         if ($dayOfTheWeek === '6') {
             $date->modify('+2 day');

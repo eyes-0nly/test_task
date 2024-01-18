@@ -77,14 +77,14 @@ class ContactController extends AbstractController
                 if (
                     $contactId && $contactService->isContactHasSuccessfulLeads($contact)
                 ) {
-                    $contactService->sendCustomer($contactId);
+                    $contactService->createCustomer($contactId);
 
                     return new JsonResponse([
                         'code' => Response::HTTP_OK,
                         'msg' => 'Added customer',
                     ]);
                 }
-                $contactService->sendLeadConnectedToContact($contact);
+                $contactService->createLeadWithContact($contact);
 
                 return new JsonResponse([
                     'code' => Response::HTTP_OK,
