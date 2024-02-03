@@ -141,7 +141,7 @@ class AmoApiContactService
             if ($e->getErrorCode() === Response::HTTP_NO_CONTENT) {
                 return null;
             }
-            
+
             throw $e;
         }
     }
@@ -280,8 +280,7 @@ class AmoApiContactService
         $customer = $this->apiClient->customers()->addOne($customer);
 
         //Привяжем контакт к созданному покупателю
-        $contact = (new ContactModel())
-            ->setId($contactId);
+        $contact = (new ContactModel())->setId($contactId);
 
         $links = (new LinksCollection())->add($contact);
 
