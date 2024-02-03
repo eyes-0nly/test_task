@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Форма отправки{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    function submitform(e) {
+        e.preventDefault();
+        var xmlhttp = new XMLHttpRequest();
+        var theUrl = '/contacts';
+        xmlhttp.open('POST', theUrl);
+        xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+        var name = document.getElementsByName('name')[0].value;
+        var lastname = document.getElementsByName('lastname')[0].value;
+        var sex = document.getElementsByName('sex');
+        if (sex) {
+            for (var i = 0; i < sex.length; i++) {
+                if (sex[i].checked){
+                    sex = sex[i].value;
+                    break;
+                }
+            }
+        }
+        var age = document.getElementsByName('age')[0].value;
+        var phone = document.getElementsByName('phone')[0].value;
+        var email = document.getElementsByName('email')[0].value;
+        xmlhttp.send(JSON.stringify({ 'name': name, 'lastname': lastname, 'sex': sex, 'age': age, 'phone': phone, 'email': email}));
+        return false;
+    }
+</script>
+{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+    input {display: block;}
+</style>
+
+<div class="example-wrapper container">
+<form onsubmit="return submitform(event)">
+<div class="row">
+<div class="col s12">
+    <h1>Форма контакта</h1>
+    </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+    Введите имя, фамилию, возраст, пол, телефон и email:
+        </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+    <input class="form-control form-control-md mb-2" type="text" name="name" value="" placeholder="Имя" required>
+    </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+    <input class="form-control form-control-md mb-2" type="text" name="lastname" value="" placeholder="Фамилия" required>
+    </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+        <input type="radio" id="male" name="sex" value="MALE" checked />
+        <label for="huey">Мужчина</label>
+    </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+        <input type="radio" id="female" name="sex" value="FEMALE" />
+        <label for="dewey">Женщина</label>
+    </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+    <input class="form-control form-control-md mb-2" type="text" name="age" value="" placeholder="Возраст" required>
+        </div>
+    </div>
+    <div class="row">
+<div class="col s12">
+    <input class="form-control form-control-md mb-2" type="text" name="phone" value="" placeholder="Телефон" required>
+    </div>
+    </div>
+    <input class="form-control form-control-md mb-2" type="text" name="email" value="" placeholder="Email" required>
+ <div class="row">
+<div class="col s12">
+    <button class="btn btn-lg btn-primary">Отправить</button>
+        </div>
+    </div>
+    </form>
+</div>
+{% endblock %}
